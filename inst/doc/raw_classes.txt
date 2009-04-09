@@ -1,0 +1,10 @@
+S1	A
+S2	B
+S3	A
+S4	A
+S5	B
+S6	B
+S7	A
+S8	A
+S9	A
+S10	B

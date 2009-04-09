@@ -1,0 +1,76 @@
+
+
+importClassesFrom(Biobase, ExpressionSet)
+
+importClassesFrom(methods, character, list, matrix, numeric)
+
+importMethodsFrom(Biobase, exprs, featureNames, pData, sampleNames)
+
+importMethodsFrom(kernlab, kernelMatrix, predict)
+
+importMethodsFrom(methods, initialize, show)
+
+importFrom(e1071, svm)
+
+importFrom(graphics, arrows, image, legend, par, plot, points, text,
+           title)
+
+importFrom(grDevices, dev.off, png)
+
+importFrom(kernlab, polydot, rbfdot)
+
+importFrom(methods, "@<-", is, new, showDefault, validObject)
+
+importFrom(pamr, pamr.cv, pamr.listgenes, pamr.predict, pamr.train)
+
+importFrom(stats, var, weighted.mean)
+
+importFrom(utils, read.table)
+
+exportMethods( "initialize",
+                "runOneLayerExtCV",
+                "runTwoLayerExtCV",
+                "show",
+                "getResults",
+                "getDataset",
+                "getDataset<-",
+				"getNoFolds1stLayer",
+				"getNoFolds1stLayer<-",
+				"getNoFolds2ndLayer",
+				"getNoFolds2ndLayer<-",
+				"getClassifierName",
+				"getClassifierName<-",
+                "getSvmKernel",
+                "getSvmKernel<-",
+				"getNoOfRepeats",
+				"getNoOfRepeats<-",
+                "getTypeFoldCreation",
+                "getTypeFoldCreation<-",
+                "getFeatureSelectionOptions",
+                "getFeatureSelectionOptions<-",
+                "getMaxSubsetSize",
+                "getMaxSubsetSize<-",
+                "getSubsetsSizes",
+                "getOptionValues",
+                "getOptionValues<-",
+                "getSubsetsSizes<-",
+                "getSpeed",
+                "getSpeed<-",
+                "getNoModels",
+                "getGenesFromBestToWorst",
+                "getModels",
+                "getNoThresholds",
+                "getNoThresholds<-",
+                "getFinalClassifier",
+                "rankedGenesImg",
+                "getResult1LayerCV",
+                "getResult2LayerCV",
+                "findFinalClassifier",
+                "classifyNewSamples"
+                )
+export(
+        "plotErrorsRepeatedOneLayerCV",
+        "plotErrorsSummaryOneLayerCV",
+        "plotErrorsFoldTwoLayerCV")
+
+exportClasses("geneSubsets", "assessment", "finalClassifier", "thresholds")

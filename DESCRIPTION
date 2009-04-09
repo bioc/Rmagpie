@@ -1,0 +1,26 @@
+Package: Rmagpie
+Version: 0.99.0
+Title: MicroArray Gene-expression-based Program In Error rate estimation
+Author: Camille Maumet <Rmagpie@gmail.com>, with
+    contributions from C. Ambroise
+	J. Zhu
+Maintainer: Camille Maumet <cam.m@uq.edu.au>
+Depends:  R (>= 2.6.1), Biobase (>= 1.16.3)
+Imports: Biobase, e1071, graphics, grDevices, kernlab, methods, pamr,
+         stats, utils
+Suggests: xtable
+Description: Microarray Classification is designed for both biologists and statisticians. 
+    It offers the ability to train a classifier on a labelled microarray dataset and to then use
+    that classifier to predict the class of new observations. A range of modern classifiers are available, including
+    support vector machines (SVMs), nearest shrunken centroids (NSCs)... Advanced methods are provided to estimate
+    the predictive error rate and to report the  subset of genes which appear essential in discriminating between classes.
+License: GPL (>= 3)
+LazyLoad: yes
+URL: http://www.bioconductor.org/
+biocViews: Microarray, Classification
+collate: AllClasses.R AllGenerics.R AllInitialize.R classifyNewSamples.R convertDataFile.R 
+ assessment-accessors.R featureSelectionOptions-accessors.R finalClassifier-accessors.R
+ geneSubsets-accessors.R initialize-methods.R loadData-methods.R non_linear_svm.R one_layer_ext_CV.R rateGenes.R
+ result2LayerCV-accessors.R resultRepeated1LayerCV-accessors.R rfe_zhu.R runOneLayerExtCV-methods.R runTwoLayerExtCV-methods.R
+ setValidity-methods.R show-methods.R thresholds-accessors.R tool_case.R two_layer_ext_CV.R typeValidity.R user_interface.R
+

@@ -1,0 +1,746 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% HEADER
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\VignetteIndexEntry{Rmagpie Examples}
+%\documentclass[a4paper,twoside,10pt]{report}
+\documentclass[a4paper,twoside,11pt]{report}
+
+% Alternative Options:
+%	Paper Size: a4paper / a5paper / b5paper / letterpaper / legalpaper / executivepaper
+% Duplex: oneside / twoside
+% Base Font Size: 10pt / 11pt / 12pt
+
+
+%% Normal LaTeX or pdfLaTeX? %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ==> The new if-Command "\ifpdf" will be used at some
+%% ==> places to ensure the compatibility between
+%% ==> LaTeX and pdfLaTeX.
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+	\pdffalse              %%normal LaTeX is executed
+\else
+	\pdfoutput=1           
+	\pdftrue               %%pdfLaTeX is executed
+\fi
+
+
+%% Fonts for pdfLaTeX %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ==> Only needed, if cm-super-fonts are not installed
+\ifpdf
+	%\usepackage{ae}       %%Use only just one of these packages:
+	%\usepackage{zefonts}  %%depends on your installation.
+\else
+	%%Normal LaTeX - no special packages for fonts required
+\fi
+
+
+%% Language %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{Sweave}
+%\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{fullpage}
+
+
+
+%% Math Packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+
+
+%% Line Spacing %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{setspace}
+%\singlespacing        %% 1-spacing (default)
+%\onehalfspacing       %% 1,5-spacing
+%\doublespacing        %% 2-spacing
+
+
+%% Other Packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{a4wide} %%Smaller margins = more text per page.
+%\usepackage{fancyhdr} %%Fancy headings
+%\usepackage{longtable} %%For tables, that exceed one page
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Remarks
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% TODO:
+% 1. Edit the used packages and their options (see above).
+% 2. If you want, add a BibTeX-File to the project
+%    (e.g., 'literature.bib').
+% 3. Happy TeXing!
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Options / Modifications
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\input{options} %You need a file 'options.tex' for this
+%% ==> TeXnicCenter supplies some possible option files
+%% ==> with its templates (File | New from Template...).
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DOCUMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+%% File Extensions of Graphics %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ==> This enables you to omit the file extension of a graphic.
+%% ==> "\includegraphics{title.eps}" becomes "\includegraphics{title}".
+%% ==> If you create 2 graphics with same content (but different file types)
+%% ==> "title.eps" and "title.pdf", only the file processable by
+%% ==> your compiler will be used.
+%% ==> pdfLaTeX uses "title.pdf". LaTeX uses "title.eps".
+\ifpdf
+	\DeclareGraphicsExtensions{.pdf,.jpg,.png}
+\else
+	\DeclareGraphicsExtensions{.eps}
+\fi
+
+\pagestyle{empty} %No headings for the first pages.
+
+
+%% Title Page %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ==> Write your text here or include other files.
+
+%% The simple version:
+\title{Rmagpie 0.4 User Manual}
+\author{Camille Maumet}
+
+\maketitle
+
+%% The nice version:
+%\input{titlepage} %%You need a file 'titlepage.tex' for this.
+%% ==> TeXnicCenter supplies a possible titlepage file
+%% ==> with its templates (File | New from Template...).
+
+
+%% Inhaltsverzeichnis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tableofcontents %Table of contents
+\cleardoublepage %The first chapter should start on an odd page.
+
+\pagestyle{plain} %Now display headings: headings / fancy / ...
+
+
+
+%% Chapters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ==> Write your text here or include other files.
+
+%\input{intro} %You need a file 'intro.tex' for this.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% <== Introduction
+\chapter{Introduction}\label{Introduction}
+
+%\section{Package functionalities}\label{func}
+This package provides classes (data structures) and methods (functions) to train 
+classifiers and to estimate their predictive error rate using external one-layer
+and two-layer cross-validation. These two techniques of cross-validation have been
+ presented respectively in \cite{oneLayer} and \cite{Stone74}, \cite{ZhuTwoLayers},
+\cite{WoodTwoLayers}. One-layer cross-validation can be used to determine a nearly
+ unbiased estimate of the error rate which can then be used for feature selection.
+Feature selection may be used to select a near-optimal subset of the features and
+the error rate can be estimated for each subset of features using cross-validation.
+However, if the user wants to choose the classifer whose feature subset produced
+the smallest estimated error rate over all the subsets considered, then a second
+layer of cross-validation is required to estimate the effect of this choice.
+
+
+
+%% <== Installation
+To load the Rmagpie package with the following R command and start using Rmagpie:
+<<Load package,echo=false,results=hide>>=
+library(Rmagpie)
+@
+
+\chapter{Quick Start}\label{start}
+\section{Introduction}
+This section presents a quick review of the package functionality by giving an 
+example. The Rmagpie package does not aim to pre-process your micro-array data. 
+Other packages already provide this functionality and we assume that we are 
+working on pre-processed data.
+
+\section{Define your experiment}\label{createExpe}
+To specify the options of our classification task, we need to create three objects.
+An object of class \verb#ExpressionSet# to store the microarray data, an object 
+of class \verb#featureSelectionOptions# to store the options relative to the 
+feature selection process and finally an \verb#experiment# object which stores 
+all the information needed before starting the classification task.
+
+\subsection{Load your dataset}\label{createDataset}
+First of all, your data should be stored in an \verb#ExpressionSet# in order to 
+be usable from Rmagpie package. For more information on how to create and load 
+data into an \verb#ExpressionSet# please refer to the relevant documentation 
+available on Bioconductor's website (http://www.bioconductor.org).
+
+\subsection{Store your feature selection options}\label{createFeatOptions}
+Two feature selection methods are currently available, the Recursive Feature 
+Elimination (RFE) for the Support Vector Machine (SVM), as presented in 
+\cite{guyonRFE} and the Nearest Shrunken Centroid (NSC) as described in \cite{nsc}. 
+The former can be used by creating an object of class \verb#geneSubsets# and the
+latter by creating an object of class \verb#thresholds#.
+
+\subsubsection{RFE-SVM as a method of feature selection}
+The object of class \verb#geneSubsets# is meant to store the information relative
+to the subsets of genes that must be considered during forward selection by the 
+RFE. Basically, you must specify the sizes of the subsets that should be considered.
+There are three easy ways to reach this goal.
+
+The easiest way is to keep the default values which consider subsets of size one 
+up to the number total of features and all integer powers of two in between. 
+For example, if the total number of features were 35, then subsets of size 1, 2,
+4, 8, 16, 32 and 35 would be considered. If you wish to use this default 
+\verb#geneSubsets#, you can ignore the current section and go directly to 
+section \ref{expe}.
+
+Another solution is to define the size of the largest subset to be considered 
+and the speed of the RFE: \verb#high# or \verb#slow#. By default the speed is 
+set to \verb#high#. This means, as proposed in \cite{guyonRFE}, that the largest
+subset is considered first, then a subset of size equal to the greatest power 
+below this and then decreasing by powers of two until reaching a single feature. 
+With a \verb#slow# value for speed the size of the subsets decreases by one at 
+each step. This methods can produce better results but is highly computationally
+intensive. 
+
+<<Create genesubsets fast>>=
+geneSubsets <- new("geneSubsets", speed="high", maxSubsetSize=20)
+geneSubsets
+@
+<<Create genesubsets slow>>=
+geneSubsets <- new("geneSubsets", speed="slow", maxSubsetSize=20)
+geneSubsets
+@
+
+Alternatively, you can specify all the subset sizes that the software must try. 
+For example the following command requests subsets of size 1, 2, 3, 5, 9, 10, 15 and 20.
+<<Gene subsets Option values>>=
+geneSubsets <- new("geneSubsets", speed="high", optionValues=c(1,2,3,5,9,10,15,20))
+geneSubsets
+@
+
+Be careful not to give a subset size larger than the number of genes in your 
+dataset. If you do so, an error message similar to that shown below will be 
+generated when you try to incorporate this object into your \verb#experiment#.
+
+\begin{verbatim}
+Error in validObject(.Object) : 
+  invalid class "assessment" object: The maximum of genes in 'geneSubsets'(70) must not 
+  be greater than the number of features in 'dataset'(20)
+\end{verbatim}
+
+\subsubsection{NSC as a method of feature selection}
+The object of class \verb#thresholds# stores the thresholds that must be 
+considered by the nearest shrunken algorithm to determine which one is best. 
+The threshold chosen determines how many genes are selected. Basically, you must 
+specify the thresholds to be considered. There are two easy ways to reach this goal.
+
+The easiest way is to keep the default values which corresponds to the thresholds
+generated by the function \verb#pamr.train# on the whole dataset, for more deatils
+please refer to the \verb#pamr# package documentation. If you want to use this 
+default \verb#thresholds#, you can ignore the current section and go directly to
+section \ref{expe}.
+
+Alternatively, you can specify all the thresholds that must be considered by 
+the software. For example the following command requests the thresholds 0, 0.1,
+0.2, 0.3, 0.4, 0.5, 1,2.
+
+<<Specify thresholds>>=
+thresholds <- new("thresholds", optionValues=c(0,0.1,0.2,0.3,0.4,0.5,1,2))
+@
+
+\subsection{Store the options related to your experiment}\label{expe}
+The last step in the definition of your experiment is to integrate your dataset,
+your feature selection options and decide what options to use for the experiment.
+We begin by creating an object of class \verb#assessment#. The argument must be 
+specified as follows:
+
+\begin{itemize}
+\item{\verb#dataset#, ExpressionSet object that we created in section \ref{createDataset}}
+\item{\verb#noFolds1stLayer#, number of folds to be created in the inner layer of two-layer cross-validation. 1 corresponds to leave-one-out}
+\item{\verb#noFolds2ndLayer#, number of folds to be created in the outer layer of two-layer cross-validation and for the one-layer cross-validation. 1 corresponds to leave-one-out}
+\item{\verb#classifierName#, name of the classifier to be used 'svm' (Support Vector Machine), 
+%'lda' (linear Discriminant Analysis), 'naiveBayes' (Naive Bayes), 
+or 'nsc' (Nearest Shrunken Centroid).}
+\item{\verb#featureSelectionMethod#, name of the feature selection method: 'rfe' (Recursive Feature Elimination) or 'nsc' (Nearest Shrunken Centroid).}
+\item{\verb#typeFoldCreation#, name of the method to be used to generate the folds: 'naive', 'balanced' or 'original'.}
+\item{\verb#svmKernel#, name of the feature kernel used both for the SVM as a feature selection method in RFE and for SVM as a classifier: 'linear' (linear kernel), 'radial' (radial basis kernel) or 'polynomial' (polynomial kernel).}
+\item{\verb#noOfRepeats#, K-fold cross-validation allocates observations randomly to folds, so repeating the process is likely to give different estimates of error rate. The final results are then averaged over the repeats. As mentioned in \cite{Burman89}, this is believed to improve the accuracy of estimates. \verb#noOfRepeats# is the number of repeats to be done, both for one-layer and two-layer of cross-validation.}
+\item{\verb#featureSelectionOptions#, \verb#geneSubsets# or \verb#thresholds# object that we created in section \ref{createFeatOptions} or \verb#missing# if you want to use the default values}
+\end{itemize}
+
+In the next sections, we will work with the dataset \verb#vV70genes# available 
+in the Rmagpie package. This is a version of data drawn from \cite{Veer02}, in 
+which the original number of genes measurements (for around 25000 genes) has been
+ reduced to data for 70 genes. That process has biased any possible results, 
+but it does provide a useful platform for testing. Before using it, you must make
+the following call to load the dataset.
+
+<<Load Dataset>>=
+data('vV70genesDataset')
+@
+
+We will use the default \verb#geneSubsets#.
+
+For example, if we want to set the feature selection method to be RFE-SVM, with 
+an SVM as classifier, a cross-validation with 10 folds in the outer layer, 9 
+folds in the inner layer, we would use:
+<<Assessment object One >>=
+myAssessment <- new ( "assessment",
+                        dataset = vV70genes,
+                        noFolds1stLayer = 9,
+                        noFolds2ndLayer = 10,
+                        classifierName = "svm",
+                        featureSelectionMethod = 'rfe',
+                        typeFoldCreation = "original",
+                        svmKernel = "linear",
+                        noOfRepeats = 3)
+myAssessment
+@
+
+Similarly, if we want to set the feature selection method as NSC, with an NSC 
+classifier, a cross-validation with 10 folds in the outer layer, 9 folds in the
+inner layer performed 10 times, we would use:
+<<Assessment object two>>=
+myAssessment2 <- new ( "assessment",
+                         dataset = vV70genes,
+                         noFolds1stLayer = 9,
+                         noFolds2ndLayer = 10,
+                         classifierName = "nsc",
+                         featureSelectionMethod = 'nsc',
+                         typeFoldCreation = "original",
+                         noOfRepeats = 2)
+myAssessment2
+@
+
+As we can see from the display of the assessment object, the thresholds have 
+been successfully updated.
+
+\section{Run one-layer and two-layer cross-validation}\label{runExpe}
+There are two methods (functions) which can help use run our assessment: 
+\verb#runOneLayerExtCV# and \verb#runTwoLayerExtCV# for, respectively, computing 
+an external one-layer or an external two-layer cross-validation including feature
+selection.
+
+\subsection{External One-Layer Cross Validation}
+External one-layer cross-validation aims to assess the error rate of a classifier
+using feature selection in an appropriate manner. At the end of this step we will
+get a an error rate estimate for each size of subset considered. Since all the 
+options have already been chosen via the \verb#experiment# object, the command 
+to start the cross-validation is trivial.
+
+Once the previous command has been run, we can look again at our experiment, 
+the result of one-layer cross-validation has been updated.
+
+<<One layer cross validation>>=
+# Necessary to find the same results
+set.seed(234)
+myAssessment <- runOneLayerExtCV(myAssessment)
+myAssessment
+@
+
+
+From this display we can see the key results of the one-layer cross-validation.
+For more details on how to get the complete results of this cross-validation, 
+see section \ref{accessResults}. Here we can infer that the best subset size is 
+32 with an error rate of 0.2008547. The cross-validated error rates for subsets 
+of size 1, 2, 4, 8, 16, 32, 64 and 70 are respectively 0.3632479, 0.3717949, 
+0.3162393, 0.2649573, 0.2521368, 0.2008547, 0.2051282, 0.2136752. The standard 
+errors of these cross-validated error rates are respectively 0.0174141 0.0222094 
+0.0245958 0.029513 0.0401672 0.0365962 0.0361366 and 0.035697. These are calculated
+ by treating the cross-validation error rate as the average of the error rates on
+ each fold. This display also provide the error rate for each class. As we know 
+from \cite{Stone74}, \cite{ZhuTwoLayers} and \cite{WoodTwoLayers}, the best error
+rate is biased and two-layer of cross-validation must be computed to get a 
+unbiased estimate.
+
+\subsection{Two-layer Cross Validation}
+
+External two-layer cross-validation aims to assess the error rate of a classifier 
+after the best feature subset has been chosen using the results of one-layer 
+cross-validtion with each feature subset size. Since all the options have already 
+been chosen via the \verb#experiment# object, it is easy to start two-layer 
+cross-validation.
+
+We can look again at our experiment. The result of two-layer cross-validation 
+will have been updated.
+
+<<Two layer cross validation>>=
+myAssessment <- runTwoLayerExtCV(myAssessment)
+myAssessment
+@
+
+
+This command has given the key results of the two-layer cross-validation. For 
+more details on how to get the complete results of cross-validation, see section 
+\ref{accessResults}. Here we can infer that the estimate of the error rate after 
+choosing the optimal subset size was 0.4 with the optimal subset size averaging 
+5.7 genes.
+
+\section{Classify new observations}\label{classifyNewObs}
+Another simple method allow us to classify new  based on our dataset. The final 
+classifier is trained on the whole dataset. By default, it uses only the genes 
+obtained by feature selection with the best value of option (size of subset for 
+RFE-SVM or threshold for NSC) found in one-layer cross-validation. You can instead
+select your favorite option (number of genes or threshold) by specifying it in the
+arguments. Three steps are involved for the classification of one or more 
+observations. First, you must pre-process your raw data to produce a file containing
+the gene expression values in which each column corresponds to an observation and
+each line to a gene. The first row must contain the names of the new observations
+and the first column the names of the genes. Second, the final classifier must
+be trained on the whole dataset using only the relevant genes by calling 
+the method \verb#findFinalClassifier#.
+
+<<Classify observations>>=
+myAssessment <- findFinalClassifier(myAssessment)
+@
+
+Once the final classifier has been trained we can use it to predict the class of
+new observations. We will use the following filename \verb#vV_NewSamples.txt#, 
+which contains the gene expression values of four new observations.
+
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{rrrrrr}
+ \hline
+& S1new & S2new & S3new & S4new \\
+ \hline
+211316-x-at & 0.238549585 & 0.309818611 & 0.039801616 & 0.185127978 \\
+201947-s-at & 0.062913738 & 0.348206391	& 0.049101993 &	0.018549661 \\
+208018-s-at & 0.214811858 & 0.310358253	& 0.90570071 & 0.117063616 \\
+208884-s-at & 0.116130479 & 0.105216261	& 0.413862903 & 0.364270183 \\
+218251-at & 0.110915852	 & 0.082847135	& 0.05732792 & 0.250266178 \\
+220712-at & 0.156955443	& 0.018847956	& 0.22558974 & 0.058140084  \\
+34764-at & 0.163686223	& 0.066543884	& 0.136281185 &	0.164491474 \\
+217754-at & 0.166883529	 & 0.030785639	& 0.583919806 &	0.076886967  \\
+221938-x-at & 0.003795356 & 0.017734243	& 0.142946003 &	0.073167907 \\
+209492-x-at & 0.13303862 & 0.063216618	& 0.031262267 &	0.089941499 \\
+211596-s-at & 0.070772013 & 0.186176953	& 0.119515381 &	0.30368565 \\
+221925-s-at & 0.179151366 & 0.047201722	& 0.240400082 &	0.298616043 \\
+200804-at & 0.184900824	& 0.148434291	& 0.154408075 &	0.162802706 \\
+206529-x-at & 0.432168595 & 0.405113542	& 0.350297917 &	0.344634651 \\
+213224-s-at & 0.195566057 & 0.021122683	& 0.04348983 &	0.341574279 \\
+215628-x-at & 0.114695588 & 0.013643621	& 0.173638361 &	0.006354456 \\ 
+211362-s-at & 0.111345205 & 0.078990291	& 0.315260021 &	0.330167423 \\
+221058-s-at & 0.133462748 & 0.011197787	& 0.278062554 &	0.134014777 \\
+210381-s-at & 0.013173383 & 0.032487425	& 0.203678868 &	0.118008774 \\
+216989-at & 0.395635336 & 0.073903352 & 0.006366366 & 0.038050583 \\
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+The classification task is started by calling \verb#classifyNewSamples#.
+
+<<Classify new Samples One>>=
+newSamplesFile <- paste(system.file(package="Rmagpie"),"/doc/vV_newSamples.txt",sep="")
+res <- classifyNewSamples( myAssessment,newSamplesFile)
+@
+
+<<Good prognois table1>>=
+library(xtable)
+goodPrognosis <-names(res)[res=="goodPronosis"]
+goodPrognosis
+@
+
+<<poor prognois table1>>=
+poorPrognosis <-names(res)[res=="poorPronosis"]
+poorPrognosis
+@
+
+
+<<Classify new Samples two>>=
+newSamplesFile <- paste(system.file(package="Rmagpie"),"/doc/vV_newSamples.txt",sep="")
+res <- classifyNewSamples( myAssessment,newSamplesFile,optionValue=1)
+@
+
+<<Good prognois table2>>=
+goodPrognosis <-names(res)[res=="goodPronosis"]
+goodPrognosis
+@
+
+<<poor prognois table2>>=
+poorPrognosis <-names(res)[res=="poorPronosis"]
+@
+
+The vector returned contains the predicted class for each new sample.
+%% <== End of Quick Start
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Beginning of access to your results
+\chapter{Accessing the results of one-layer and two-layer cross-validation}\label{accessResults}
+
+\section{Introduction}
+When a one-layer or a two-layer cross-validation is run, the key results are 
+printed out on screen. However, you might want to obtain more details on your run.
+This is possible by calling method \verb#getResults#. This method has been designed
+to be a user-friendly interface to the complex class structure which stores the 
+results of one-layer and two-layer cross-validation.
+
+
+%% <= End of access to your results
+\section{Argument of the method getResults}
+The method \verb#getResults# has two main arguments: \verb#layer# which specifies
+which layer of cross-validation is we are concerned with and \verb#topic# which 
+specifies what information is needed. There are also two optional arguments
+\verb#errorType# and \verb#genesType# that describe the scope of the 
+\verb#topic# arguments.
+
+The argument \verb#layer# can take on any of the following values:
+\begin{itemize}
+\item{1}: Access to the one-layer external cross-validation
+\item{1,i}: Access to the ith repeat of the one-layer external cross-validation
+\item{2}: Access to the two-layer external cross-validation
+\item{2,i}: Access to the ith repeat of the two-layer external cross-validation
+\item{2,i,j}: Access to the jth inner one-layer cross-validation of the ith repeat of the two-layer external cross-validation
+\item{2,i,j,k}: Access to the kth repeat of the jth inner one-layer cross-validation of the ith repeat of the two-layer external cross-validation
+\end{itemize}
+The argument \verb#topic# can take the following values:
+\begin{itemize}
+\item{`errorRate': Access to the error rates related to the specified layer of cross-validation. The optional argument errorType can be used in conjunction with this topic.}
+\item{`genesSelected': Access to the genes selected in the specified layer of cross-validation. The optional argument genesType can be used in conjunction with this topic.}
+\item{`bestOptionValue': Access to the best option value (best number of genes for RFE-SVM or best threshold for NSC) in the specified layer. This value can be an average.}
+\item{`executionTime': Access to the time in seconds that was used to compute the specified layer.}
+\end{itemize}
+
+\section{Error rates}
+
+\subsection{Optional argument errorType}
+Different information on the estimated error rates are available and can be 
+specified with the arguments \verb#errorType#:
+\begin{itemize}
+\item{`all' or missing: Access to all the following values.}
+\item{`cv': Access to the cross-validated error rate.}
+\item{`se': Access to the standard error of the cross-validated error rate.}
+\item{`fold': Access to the error rate in each fold.}
+\item{`noSamplesPerFold': Access to the number of samples per fold.}
+\item{`class': Access to the error rate in each class.}
+\end{itemize}
+
+The previous options are not available for all the types of layers. For instance,
+since repeated one-layer cross-validation gives a summary of several repeats of 
+one-layer cross-validation, we don't have a fold error rate. The following table 
+describes which option is available for each kind of layer.
+
+\begin{table}[hbtp]
+\label{tab1}
+\caption{genesType available for each type of layer}
+\begin{center}
+\begin{tabular}{c|cccccc}
+layer argument & `all' & `cv' & `se' & `fold' & `noSamplesPerFold' & `class'  \\ \hline
+1 & Yes & Yes & Yes & No & No & Yes\\
+1,i & Yes & Yes & Yes & Yes & Yes & Yes\\
+2 & Yes & Yes & Yes & No & No & Yes\\
+2,i & Yes & Yes & Yes & Yes & Yes & Yes\\
+2,i,j & Yes & Yes & Yes & No & No & Yes\\
+2,i,j,k & Yes & Yes & Yes & Yes & Yes & Yes\\
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\subsection{Examples}
+<<Example One >>=
+# All the information on error rates for the repeated one-layer CV
+getResults(myAssessment, 1, topic='errorRate')
+# Cross-validated error rates for the repeated one-layer CV: Une value
+# per size of subset
+getResults(myAssessment, 1, topic='errorRate', errorType='cv')
+# Cross-validated error rates for the repeated two-layer CV: Une value 
+# only corresponding to the best error rate
+getResults(myAssessment, 2, topic='errorRate', errorType='cv')
+@
+
+\section{Genes selected}
+
+\subsection{Optional argument genesType}
+Different information on the genes selected are available and can be specified 
+with the arguments \verb#genesType#:
+\begin{itemize}
+\item{missing: Access to one of the following values (by default `frequ' if available).}
+\item{`fold': Access to the list of genes selected in each fold (and for each size of subset or threshold if relevant).}
+\item{`frequ': Access to the genes selected order by their frequency along the folds and the repeats.}
+\end{itemize}
+
+The previous options are not available for all the types of layers. For instance, 
+Since the repeated one-layer cross-validation is a summary of several repeats of 
+one-layer cross-validation, we don't have the genes selected in each fold. The 
+following table describes which option is available for each kind of layer.
+
+\begin{table}[hbtp]
+\label{tab2}
+\caption{errorType available for each type of layer}
+\begin{center}
+\begin{tabular}{c|cc}
+layer argument & `fold' & `frequ'\\ \hline
+1 & No & Yes\\
+1,i & Yes & Yes\\
+2 & No & Yes\\
+2,i & Yes & Yes\\
+2,i,j & No & Yes\\
+2,i,j,k & Yes & Yes\\
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Examples}
+<<Example 2>>=
+# Frequency of the genes selected among the folds and repeats 
+# of the one-layer CV
+res <- getResults(myAssessment, c(1,1), topic='genesSelected', genesType='frequ')
+# Genes selected for the 3rd size of subset in the 2nd fold of the
+# second repeat of one-layer external CV
+getResults(myAssessment, c(1,2), topic='genesSelected', genesType='fold')[[3]][[2]]
+@
+
+\section{Best value of option}
+
+\subsection{Overview}
+This \verb#topic# gives access to the best values of the option (best size of 
+subset or best threshold) for a given layer.
+
+\subsection{Examples}
+<<Example 3>>=
+# Best number of genes in one-layer CV
+getResults(myAssessment, 1, topic='bestOptionValue')
+# Best number of genes in the third repeat of one-layer CV
+getResults(myAssessment, c(1,3), topic='bestOptionValue')
+# Average (over the folds), best number of genes in the two-layer CV
+getResults(myAssessment, 2, topic='bestOptionValue')
+# Average (over the folds), best number of genes in the 
+# third repeat of the two-layer CV
+getResults(myAssessment, c(2,3), topic='bestOptionValue')
+@
+
+\section{Execution time}
+
+\subsection{Overview}
+This \verb#topic# gives access to the execution time used to compute a given layer.
+
+\subsection{Examples}
+<<Example 4>>=
+# Execution time to compute the repeated one-layer CV
+getResults(myAssessment, 1, topic='executionTime')
+# Execution time to compute the third repeat of the repeated one-layer CV
+getResults(myAssessment, c(1,3), topic='executionTime')
+# Execution time to compute the repeated two-layer CV
+getResults(myAssessment, 2, topic='executionTime')
+# Execution time to compute the second repeat of the repeated two-layer CV
+getResults(myAssessment, c(2,2), topic='executionTime')
+@
+%% <= End of access to your results
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Beginning of plots and graphics
+
+\chapter{Plots and graphics}
+
+This package also provides three methods to plot the results of one-layer and 
+two-layer cross-validation procedures. \verb#plotErrorsSummaryOneLayerCV# and
+ \verb#plotErrorsRepeatedOneLayerCV# plot the cross-validated error rate obtained 
+during the one-layer cross-validation and \verb#plotErrorsFoldTwoLayerCV# plot 
+the fold error rates obtained in the second layer of two-layer cross-validation.
+
+\section{Plot the cross-validated error rates of one-layer cross-validation}
+\subsection{Plot the summary error rate only}
+Concerning the one-layer cross-validation, the method \verb#plotErrorsSummaryOneLayerCV# 
+plots the cross-validated error rate averaged over the repeats versus the number 
+of genes (for SVM-RFE) or the value of the thresholds (for NSC). An example is 
+given below.
+
+<<PlotErrorSummary1,results=hide>>=
+png("plotErrorsSummaryOneLayerCV.png")
+plotErrorsSummaryOneLayerCV(myAssessment)
+dev.off()
+@
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.7\textwidth, height=0.7\textwidth]{plotErrorsSummaryOneLayerCV.png}
+\caption{ Cross-validated error rates of one layer 
+cross validation.}
+\end{center}
+\end{figure}
+
+
+\subsection{Plot the summary error rate only}
+Concerning the one-layer cross-validation, the method \verb#plotErrorsRepeatedOneLayerCV# 
+plots the cross-validated error rate averaged over the repeats and the cross-validated 
+error rate obtained for each repeat versus the number of genes (for SVM-RFE) or
+the value of the thresholds (for NSC). An example is given below.
+
+<<PlotErrorSummaryRepeated, results=hide>>=
+png("plotSummaryErrorRate.png")
+plotErrorsRepeatedOneLayerCV(myAssessment)
+dev.off()
+@
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.7\textwidth, height=0.7\textwidth]{plotSummaryErrorRate.png}
+\caption{ Cross-validated error rate averaged over the repeats .}
+\end{center}
+\end{figure}
+
+\section{Plot the fold error rates of two-layer cross-validation}
+\subsection{Plot the summary error rate only}
+Concerning the two-layer cross-validation, the method \verb#plotErrorsFoldTwoLayerCV# 
+plots the fold error rates in the second layer versus the number of genes (for SVM-RFE)
+or the value of the thresholds (for NSC). An example is given below.
+
+<<Two layer cross validation,results=hide>>=
+png("twoLayerCrossValidation.png")
+plotErrorsFoldTwoLayerCV(myAssessment)
+dev.off()
+@
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.7\textwidth, height=0.7\textwidth]{twoLayerCrossValidation.png}
+\caption{ Error rates per fold in the second layer .}
+\end{center}
+\end{figure}
+
+%% <= End of plots
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BIBLIOGRAPHY AND OTHER LISTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% A small distance to the other stuff in the table of contents (toc)
+\addtocontents{toc}{\protect\vspace*{\baselineskip}}
+
+%% The Bibliography
+%% ==> You need a file 'literature.bib' for this.
+%% ==> You need to run BibTeX for this (Project | Properties... | Uses BibTeX)
+\addcontentsline{toc}{chapter}{Bibliography} %'Bibliography' into toc
+\nocite{*} %Even non-cited BibTeX-Entries will be shown.
+\bibliographystyle{plain} %Style of Bibliography: plain / apalike / amsalpha / ...
+\bibliography{literature} %You need a file 'literature.bib' for this.
+
+%% The List of Figures
+%\clearpage
+%\addcontentsline{toc}{chapter}{List of Figures}
+%\listoffigures
+
+%% The List of Tables
+%\clearpage
+%\addcontentsline{toc}{chapter}{List of Tables}
+%\listoftables
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% APPENDICES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+%% ==> Write your text here or include other files.
+
+%\input{FileName} %You need a file 'FileName.tex' for this.
+
+
+\end{document}
+
