@@ -76,7 +76,7 @@ applied on \code{dataset}.
     \item{\code{featureSelectionMethod}:}{Object of class \code{"character"} ~~ }
     \item{\code{typeFoldCreation}:}{\code{character}. Type of fold creation: 'original', 'simple' or 'naive'}
     \item{\code{svmKernel}:}{Object of class \code{"character"} ~~ }
-    \item{\code{noOfRepeat}:}{\code{numeric}. Number of repeats to be performed for each cross-validation.}
+    \item{\code{noOfRepeats}:}{\code{numeric}. Number of repeats to be performed for each cross-validation.}
     \item{\code{featureSelectionOptions}:}{Object of class \code{"featureSelectionOptions"}. Sizes of subsets
     to be tried in the RFE or thresholds to be tried with the NSC.}
     \item{\code{resultRepeated1LayerCV}:}{Object of class \code{"resultRepeated1LayerCVOrNULL"} NULL is the external one layer CV has not been run yet, resultRepeated1LayerCV containing the results}
