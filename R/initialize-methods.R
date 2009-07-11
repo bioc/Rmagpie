@@ -120,7 +120,7 @@ setMethod("initialize", "assessment",
             # Set the default thresholds
             if (class(.Object@featureSelectionOptions) == 'thresholds' && length(.Object@featureSelectionOptions@optionValues) == 0){
                 trained <-  pamr.train(data=list(  x=exprs(dataset),
-                                            y=pData(dataset)$type))
+                                            y=pData(dataset)[[1]]))
                 .Object@featureSelectionOptions@optionValues <- trained$threshold
                 .Object@featureSelectionOptions@noOfOptions <- length(trained$threshold)
                 # Valid the 'thresholds' object
@@ -137,7 +137,7 @@ setMethod("initialize", "assessment",
                 } else {
                     # Set the default thresholds
                     trained <-  pamr.train(data=list(   x=exprs(dataset),
-                                                        y=pData(dataset)$type))
+                                                        y=pData(dataset)[[1]]))
                     .Object@featureSelectionOptions <- new("thresholds", optionValues=trained$threshold)
                     validObject(.Object@featureSelectionOptions)
                 }

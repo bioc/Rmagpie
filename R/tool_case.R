@@ -57,7 +57,7 @@ performACvPerModelWithNSCAndNSC  <- function( dataset,
 
     # --- Core of the method ---
     x <- exprs(dataset) # Levels of gene expression
-    y <- pData(dataset)$type # class labels
+    y <- pData(dataset)[[1]] # class labels
 
     # Format the data to be usable by the pamr package
     mydata <- list( x=x,
@@ -201,7 +201,7 @@ performACvPerModelWithSVMAndRFE  <- function( dataset,
     #       * Train with the best subset of genes of a given size and test
     #         on the test data
     model <- rfe.cv(  x = aperm(exprs(dataset)),
-                      y = pData(dataset)$type,
+                      y = pData(dataset)[[1]],
                       #nfold = noFolds,
                         foldInds = testFoldInds,
                       noSelectedFeatures = optionValues,
@@ -418,7 +418,7 @@ RFESVMFeatureSelection <- function(dataset, subsetsSizes, kernel, verbose) {
 NSCFeatureSelection <- function(dataset, subsetsSizes, kernel, verbose) {
     # Train the NSC to find the best genes for each size of subset
     mydata <- list( x=exprs(dataset),
-                    y=pData(dataset)$type,
+                    y=pData(dataset)[[1]],
                     geneid=featureNames(dataset),
                     genenames=featureNames(dataset))
 
@@ -557,7 +557,7 @@ NSCTrainTest <- function(classifierName, dataset, relevantGenes, trainInd,
     # Train the nearest shrunken centroid on the training data with the
     # best threshold
     trainData <- list( x=exprs(dataset[,trainInd]),
-                    y=pData(dataset)$type[trainInd],
+                    y=pData(dataset)[[1]][trainInd],
                     geneid=featureNames(dataset),
                     genenames=featureNames(dataset))  
 

@@ -46,9 +46,9 @@ oneLayerExtCV <- function(eset, testFoldInds=NULL, noFolds=10, foldCreation,
     # Starting time
     beginning <- Sys.time()
     # Number of classes
-    noClasses <- length(unique(pData(eset)$type))
+    noClasses <- length(unique(pData(eset)[[1]]))
     # Number of samples
-    noSamples <- length(eset$type)
+    noSamples <- length(eset[[1]])
     # Total number of features (genes) in the dataset
     noFeatures <- length(featureNames(eset))
     # Sizes of subsets to be tried by the forward feature selection algorithm
@@ -67,7 +67,7 @@ oneLayerExtCV <- function(eset, testFoldInds=NULL, noFolds=10, foldCreation,
     # Error rate for each fold and each size of subsets in a given repeat
     errorRatePerFold <- matrix()
     # Labels of the output classes
-    classes <- factor(levels(eset$type))
+    classes <- factor(levels(eset[[1]]))
     # List of single one layer CV corresponding to a given repeated one-layer CV
     resultOriginal1LayerCV <- alist()
 
@@ -100,7 +100,7 @@ oneLayerExtCV <- function(eset, testFoldInds=NULL, noFolds=10, foldCreation,
             testFoldInds <- divideInFolds(  noFolds=noFolds,
                                             typeFold=foldCreation,
                                             train=FALSE,
-                                            outputClasses=pData(eset)$type)
+                                            outputClasses=pData(eset)[[1]])
         }
         if (classifierName == 'svm') {
                 if (featureSelectionMethod == 'rfe'){

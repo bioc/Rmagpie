@@ -53,9 +53,9 @@ twoLayerExtCV <- function(  eset,
     noClasses <- length(unique(pData(eset)[,1]))  # Number of classes
     noFolds2 <- noFoldsExtLayer # No of folds in the 2nd layer
     noFolds1 <- noFoldsIntLayer # No of folds in the 1st layer
-    noSamples <- length(eset$type)  # No of samples
-    noSamplesPerClass <- table(eset$type) # No of samples in each class
-    classes <- factor(levels(eset$type)) # Output classes
+    noSamples <- length(eset[[1]])  # No of samples
+    noSamplesPerClass <- table(eset[[1]]) # No of samples in each class
+    classes <- factor(levels(eset[[1]])) # Output classes
     noFeatures <- length(featureNames(eset)) # Total number of features in the dataset
 
     # Variables to be updated during the computation
@@ -104,7 +104,7 @@ twoLayerExtCV <- function(  eset,
         extInds <- divideInFolds(   noFolds=noFolds2,
                                     typeFold=foldCreation,
                                     train=TRUE,
-                                    outputClasses=pData(eset)$type)
+                                    outputClasses=pData(eset)[[1]])
         outerTestInd <- lapply(extInds, function(y) setdiff(x=1:noSamples, y))
 
         # Number of samples in each fold
