@@ -205,7 +205,7 @@ rfe.cv<-function(x, y, foldInds, speed="high", noSelectedFeatures, foldCreation,
         #  For each size of subset :
         #       * Perform an RFE on the training data to find the best subset of
         #         genes of a given size       
-        model.fit[[j]] <- rfe.fit(x=x[-foldInds[[j]], ], y=y[-foldInds[[j]]], kern=kern, verbose=verbose)
+        model.fit[[j]] <- rfe.fit(x=x[-foldInds[[j]], ], y=y[-foldInds[[j]]], noSelectedFeatures=noSelectedFeatures, kern=kern, verbose=verbose)
         #       * Test on the test data
         cv.fit[foldInds[[j]],] <- rfe.predict(model.fit[[j]], x[foldInds[[j]], ])
     }
@@ -252,18 +252,18 @@ rfe.cv<-function(x, y, foldInds, speed="high", noSelectedFeatures, foldCreation,
                 rankingCriterion=rankingCriterion))
 }
 ########################################################
-rfe.ae<-function(x,y,speed="high")
-{
-  # RFE apparent error rate estimation for different number of
-  # selected features (from 1 to p)
-  fit<-rfe.fit(x,y,speed=speed)
-  yhat<-rfe.predict(fit,x)
-  nomodels<-dim(yhat)[2]
-  error.ae<- rev( colMeans(yhat != data.frame(matrix(rep(y,nomodels),length(y),nomodels))))
-  noFeatures<- noFvec(dim(x)[2],speed)
-
-  return(list(error.ae=error.ae,noFeatures=noFeatures,FList=fit$Flist))
-}
+#rfe.ae<-function(x,y,speed="high")
+#{
+#  # RFE apparent error rate estimation for different number of
+#  # selected features (from 1 to p)
+#  fit<-rfe.fit(x,y,speed=speed)
+#  yhat<-rfe.predict(fit,x)
+#  nomodels<-dim(yhat)[2]
+#  error.ae<- rev( colMeans(yhat != data.frame(matrix(rep(y,nomodels),length(y),nomodels))))
+#  noFeatures<- noFvec(dim(x)[2],speed)
+#
+#  return(list(error.ae=error.ae,noFeatures=noFeatures,FList=fit$Flist))
+#}
 
 # Recursive Feature Elimination for multiclass SVM until minf features are
 # selected Returns a list with all the  selected models
@@ -310,7 +310,7 @@ rfe.fit<-function(x, y, minf=1, speed="high", noSelectedFeatures=0, kern, verbos
                           speed,
                           noSelectedFeatures=noSelectedFeatures,
                           kern)
-
+                          
     FeaturesFromBest2Worst <- tmp$FeaturesFromBest2Worst
     orderingCriterion <- tmp$orderingCriterion
 

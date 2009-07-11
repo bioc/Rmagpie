@@ -90,7 +90,7 @@ setMethod("initialize", "thresholds",
 # assessment
 setMethod("initialize", "assessment", 
     function(.Object, dataset, 
-              featureSelectionOptions,
+              featureSelectionOptions=.Object@featureSelectionOptions,
               noFolds1stLayer=.Object@noFolds1stLayer,
               noFolds2ndLayer=.Object@noFolds2ndLayer,
               classifierName=.Object@classifierName,
