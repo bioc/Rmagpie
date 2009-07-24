@@ -1,12 +1,12 @@
 Package: Rmagpie
-Version: 1.1.2
+Version: 1.1.3
 Title: MicroArray Gene-expression-based Program In Error rate estimation
 Author: Camille Maumet <Rmagpie@gmail.com>, with
     contributions from C. Ambroise
 	J. Zhu
 Maintainer: Camille Maumet <Rmagpie@gmail.com>
-Depends:  R (>= 2.6.1), Biobase (>= 1.16.3)
-Imports: Biobase, e1071, graphics, grDevices, kernlab, methods, pamr,
+Depends:  R (>= 2.6.1), Biobase (>= 2.5.5)
+Imports: Biobase (>= 2.5.5), e1071, graphics, grDevices, kernlab, methods, pamr,
          stats, utils
 Suggests: xtable
 Description: Microarray Classification is designed for both biologists and statisticians. 
