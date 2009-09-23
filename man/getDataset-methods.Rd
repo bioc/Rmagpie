@@ -52,7 +52,7 @@ of the dataset is of interest.
 \author{ Camille Maumet }
 
 \seealso{
-    \code{\code{\linkS4class{assessment}}}
+    \code{\linkS4class{assessment}}
 }
 \examples{
 #dataPath <- file.path("C:", "Documents and Settings", "c.maumet", "My Documents", "Programmation", "Sources", "SVN", "R package", "data")
