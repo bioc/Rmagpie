@@ -66,7 +66,7 @@ setMethod("classifyNewSamples", "assessment",
         } else {
             if (getClassifierName(object) == 'nsc')  {
                 finalClassifier <- getFinalClassifier(object, "models")[[1]]
-                thres <- finalClassifier$threshold[length(finalClassifier$threshold) - model + 1]
+                thres <- finalClassifier$threshold[model]
                 predictedClass <- pamr.predict( fit=finalClassifier,
                                                 newx=newSamples,
                                                 threshold=thres)
