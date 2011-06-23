@@ -109,7 +109,7 @@
 %% ==> Write your text here or include other files.
 
 %% The simple version:
-\title{Rmagpie 0.4 User Manual}
+\title{Rmagpie 1.9.0 User Manual}
 \author{Camille Maumet}
 
 \maketitle
