@@ -379,8 +379,8 @@ myAssessment
 This command has given the key results of the two-layer cross-validation. For 
 more details on how to get the complete results of cross-validation, see section 
 \ref{accessResults}. Here we can infer that the estimate of the error rate after 
-choosing the optimal subset size was 0.4 with the optimal subset size averaging 
-5.7 genes.
+choosing the optimal subset size was 0.21 with the optimal subset size averaging 
+36.3 genes.
 
 \section{Classify new observations}\label{classifyNewObs}
 Another simple method allow us to classify new  based on our dataset. The final 
