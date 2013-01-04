@@ -19,7 +19,7 @@ importFrom(grDevices, dev.off, png)
 
 importFrom(kernlab, polydot, rbfdot)
 
-importFrom(methods, "@<-", is, new, showDefault, validObject)
+importFrom(methods, is, new, showDefault, validObject)
 
 importFrom(pamr, pamr.cv, pamr.listgenes, pamr.predict, pamr.train)
 
