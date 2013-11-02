@@ -439,7 +439,7 @@ which contains the gene expression values of four new observations.
 The classification task is started by calling \verb#classifyNewSamples#.
 
 <<Classify new Samples One>>=
-newSamplesFile <- paste(system.file(package="Rmagpie"),"/doc/vV_newSamples.txt",sep="")
+newSamplesFile <- system.file(package="Rmagpie","extdata", "vV_newSamples.txt")
 res <- classifyNewSamples( myAssessment,newSamplesFile)
 @
 
@@ -456,7 +456,7 @@ poorPrognosis
 
 
 <<Classify new Samples two>>=
-newSamplesFile <- paste(system.file(package="Rmagpie"),"/doc/vV_newSamples.txt",sep="")
+newSamplesFile <- system.file(package="Rmagpie","extdata", "vV_newSamples.txt")
 res <- classifyNewSamples( myAssessment,newSamplesFile,optionValue=1)
 @
 
